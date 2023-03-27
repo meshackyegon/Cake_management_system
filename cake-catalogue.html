@@ -1,0 +1,293 @@
+<?php
+session_start();
+$price="";
+
+$search = $_GET['search'];
+$items = array(
+    array("name" => "Blueberry Cake", "price" => 2200),
+    array("name" => "Raspberry Cake", "price" => 2400),
+    array("name" => "Chocolate Cake", "price" => 2000),
+    array("name" => "Vanilla Cake", "price" => 1800),
+    array("name" => "Coffee Cake", "price" => 2000),
+    array("name" => "Red Velvet Cake", "price" => 1600),
+    array("name" => "Carrot Cake", "price" => 1900),
+    array("name" => "Lemon Cake", "price" => 1700),
+    array("name" => "Strawberry Cake", "price" => 2100)
+);
+
+if(isset($_GET['search'])) {
+    $filtered_items = array_filter($items, function($item) use ($search) {
+        return strpos(strtolower($item["name"]), strtolower($search)) !== false;
+    });
+
+    foreach($filtered_items as $item) {
+      echo "<div class='cake'>";
+      echo "<img src='image/{$item['rasp.jpg']}' alt='" . $item['name'] . "'>";
+      echo "<h3>" . $item['name'] . "</h3>";
+      echo "<p>Price: " . $item['price'] . "</p>";
+      echo "<a class='add-to-cart' href='?action=add&id={$item['name']}&image={$item['image']}'>Add to Cart</a>";
+      echo "</div>";
+  }
+  
+}
+
+if(isset($_GET['action']) && $_GET['action'] == 'add') {
+    $name = $_GET['id'];
+
+    if(isset($_SESSION['cart'])) {
+        $item_array_id = array_column($_SESSION['cart'], "name");
+        if(!in_array($name, $item_array_id)) {
+            $count = count($_SESSION['cart']);
+            $items = array(
+                'name' => $name,
+                'price' => $price,
+                'quantity' => 1
+            );
+            $_SESSION['cart'][$count] = $items;
+        } else {
+            echo "<script>alert('Item already added to cart')</script>";
+        }
+    } else {
+        $items = array(
+            'name' => $name,
+            'price' => $price,
+            'quantity' => 1
+        );
+        $_SESSION['cart'][0] = $items;
+    }
+}
+?>
+
+
+
+
+
+
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Cake Catalogue</title>
+
+
+  <style>
+
+.featured-section {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-around;
+        align-items: center;
+        padding: 50px 0;
+      }
+      .cake {
+        margin: 20px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        padding: 10px;
+        width: 350px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        
+}
+      
+
+      .title{
+        text-align: center;
+       
+      }
+
+      .cake img{
+        height: 250px; 
+        width: 80%; 
+        background-size: cover;
+        background-position: center;
+        display: block;
+        margin: 0 auto;
+      
+      }
+      .cake h3 {
+        margin-top: 0;
+        font-size: 24px;
+      }
+      .cake p {
+        margin: 10px 0;
+  
+      }
+
+      .cake a{
+        color: blue; 
+        font-size: 105%; 
+      }
+
+  </style>
+
+</head>
+<body>
+<?php 
+    include 'header.php'; 
+?>
+
+<br><br><br>
+  
+  <div class="search" style="
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  ">
+
+    <form action="cart.php" method="get">
+      <input type="text" name="search" placeholder="Search cakes" style="
+      margin-top: 30px;
+      padding: 10px;
+  border-radius: 8px;
+  border: 1px solid black;
+  width: 400px;">
+      <button type="submit"  style="
+      background-color: purple; 
+  border: none;
+  color: white;
+  padding: 5px 20px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  border-radius: 3px;
+  margin-left: 10px;
+  width: 100px;
+      ">Search</button>
+    </form>
+  
+  </div>
+
+
+  <div class="featured-section">
+  
+  
+       
+  <div class="cake">
+  <input type="hidden" name="image" value="image/bberry1.jpg">
+  <input type="hidden" name="name" value="Blueberry Cake">
+  <input type="hidden" name="description" value="A delicious cake made with fresh blueberries and a crumbly streusel topping.">
+  <input type="hidden" name="price" value="2200">
+  <button type="submit" name="cart">Add to Cart</button>
+    <img src="image/bberry1.jpg" alt="Blueberry Cake">
+    <h3>Blueberry Cake</h3>
+    <p>A delicious cake made with fresh blueberries and a crumbly streusel topping.</p>
+    <p>Price: 2200</p>
+    <a class="add-to-cart" href="#">Add to Cart</a>
+  </div>
+  <div class="cake">
+  <input type="hidden" name="image" value="image/rasp.jpg">
+  <input type="hidden" name="name" value="Raspberry Cake">
+  <input type="hidden" name="description" value="A delicious cake made with fresh Raspberry and a crumbly streusel topping.">
+  <input type="hidden" name="price" value="2400">
+  <button type="submit" name="cart">Add to Cart</button>
+    <img src="image/rasp.jpg" alt="Raspberry Cake">
+    <h3>Raspberry Cake</h3>
+    <p>A delightful cake made with fresh raspberries and a creamy buttercream frosting.</p>
+    <p>Price: 2400</p>
+    <a class="add-to-cart" href="#">Add to Cart</a>
+  </div>
+  <div class="cake">
+  <input type="hidden" name="image" value="coffee.jpg">
+  <input type="hidden" name="name" value="Coffee Cake">
+  <input type="hidden" name="description" value="A delicious cake made with fresh coffee and a crumbly streusel topping.">
+  <input type="hidden" name="price" value="2000">
+  <button type="submit" name="cart">Add to Cart</button>
+    <img src="image/coffee.jpg" alt="Coffee Cake">
+    <h3>Coffee Cake</h3>
+    <p>A rich and indulgent cake made with strong coffee and chocolate chips.</p>
+    <p>Price: 2000</p>
+    <a class="add-to-cart" href="#">Add to Cart</a>
+  </div>
+
+  <div class="cake">
+  <input type="hidden" name="image" value="choco.jpg">
+  <input type="hidden" name="name" value="Red Velvet Cake">
+  <input type="hidden" name="description" value="A delicious cake made with fresh velvet and a crumbly streusel topping.">
+  <input type="hidden" name="price" value="1600">
+  <button type="submit" name="cart">Add to Cart</button>
+    <img src="image/choco.jpg" alt="Red Velvet Cake">
+    <h3>Red Velvet Cake</h3>
+    <p>A moist and delicious cake with a striking red color and tangy cream cheese frosting.</p>
+    <p>Price: 1600</p>
+    <a class="add-to-cart" href="#">Add to Cart</a>
+  </div>
+
+    
+  <div class="cake">
+  <input type="hidden" name="image" value="fruit1.jpg">
+  <input type="hidden" name="name" value="Carrot Cake">
+  <input type="hidden" name="description" value="A delicious cake made with fresh carrot and a crumbly streusel topping.">
+  <input type="hidden" name="price" value="1900">
+  <button type="submit" name="cart">Add to Cart</button>
+    <img src="image/fruit1.jpg" alt="Carrot Cake">
+    <h3>Carrot Cake</h3>
+    <p>A moist and flavorful cake made with fresh carrots and a hint of spice.</p>
+    <p>Price: 1900</p>
+    <a class="add-to-cart" href="#">Add to Cart</a>
+   
+  </div>
+   <div class="cake">
+   <input type="hidden" name="image" value="mint1.jpg">
+  <input type="hidden" name="name" value="Lemon Cake">
+  <input type="hidden" name="description" value="A delicious cake made with fresh lemonand a crumbly streusel topping.">
+  <input type="hidden" name="price" value="2200">
+  <button type="submit" name="cart">Add to Cart</button>
+        <img src="image/mint1.jpg" alt="Lemon Cake">
+        <h3>Lemon Cake</h3>
+        <p>A light and refreshing cake made with fresh lemon zest and juice.</p>
+        <p>Price: 1700</p>
+        <a class="add-to-cart" href="#">Add to Cart</a>
+  </div>
+
+    <div class="cake">
+    <input type="hidden" name="image" value="image3.jpg">
+  <input type="hidden" name="name" value="Chocolate Cake">
+  <input type="hidden" name="description" value="A delicious cake made with fresh chocolate and a crumbly streusel topping.">
+  <input type="hidden" name="price" value="2000">
+  <button type="submit" name="cart">Add to Cart</button>
+
+        <img src="image/image3.jpg" alt="Chocolate Cake">
+        <h3>Chocolate Cake</h3>
+        <p>A rich and decadent chocolate cake that will satisfy any chocolate lover.</p>
+        <p>Price: 2000</p>
+        <a class="add-to-cart" href="#">Add to Cart</a>
+</div>
+<div class="cake">
+<input type="hidden" name="image" value="image7.jpg">
+  <input type="hidden" name="name" value="Vanilla Cake">
+  <input type="hidden" name="description" value="A delicious cake made with fresh vanilla and a crumbly streusel topping.">
+  <input type="hidden" name="price" value="1800">
+  <button type="submit" name="cart">Add to Cart</button>
+<img src="image/image7.jpg" alt="Vanilla Cake">
+<h3>Vanilla Cake</h3>
+<p>A classic vanilla cake that is perfect for any occasion.</p>
+<p>Price: 1800</p>
+<a class="add-to-cart" href="#">Add to Cart</a>
+</div>
+
+<div class="cake">
+<input type="hidden" name="image" value="image20.jpg">
+  <input type="hidden" name="name" value="Strawberry Cake">
+  <input type="hidden" name="description" value="A delicious cake made with fresh blueberries and a crumbly streusel topping.">
+  <input type="hidden" name="price" value="2100">
+  <button type="submit" name="cart">Add to Cart</button>
+<img src="image/image20.jpg" alt="Strawberry Cake">
+<h3>Strawberry Cake</h3>
+<p>A sweet and fruity cake made with fresh strawberries and cream.</p>
+<p>Price: 2100</p>
+<a class="add-to-cart" href="#">Add to Cart</a>
+</div>
+
+
+</div>
+
+<?php
+   include'footer.php'; 
+
+   ?>
+  
+
+
